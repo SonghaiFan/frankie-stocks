@@ -2,6 +2,8 @@
 
 # Frank Stocks
 
+[English](README.md) · [简体中文](README.zh-CN.md)
+
 Keep a thematic watchlist and compare how its stocks move across time.
 
 [Guide](docs/guide.md) · [Run locally](#run-locally)
