@@ -1,31 +1,36 @@
+![Frank Stocks — current product banner](docs/readme/banner.png)
+
 # Frank Stocks
 
-A TanStack Start stock watchlist and return dashboard for tracking AI, chips, energy, defense, fintech, and consumer narratives.
+A stock watchlist and return dashboard built with TanStack Start, React and D3.
 
-## Stack
+## Features
 
-- TanStack Start + TanStack Router
-- React 19
-- D3 scales/SVG rendering
-- Yahoo Finance data through `yahoo-finance2`
-- Local JSON persistence for `watchlist.json`
+- Organize stock symbols into thematic watchlist groups.
+- Compare price history and return horizons with SVG charts.
+- Change periods, scales and optional benchmark comparisons.
 
-## Setup
+## Getting started
 
-```bash
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open the local URL printed by Vite.
 
-## Scripts
+## Project notes
 
-```bash
-npm run dev
+The watchlist is stored in `watchlist.json`; the app uses local server routes for market data. Chart periods and benchmark choices are exposed in the UI.
+
+## Development
+
+```sh
 npm run build
 npm run preview
 npm start
 ```
 
 `price_cache.json` is generated at runtime and ignored by Git.
+
+Banner sources and update instructions: [README artwork](docs/readme/README.md).

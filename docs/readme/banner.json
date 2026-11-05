@@ -1,0 +1,31 @@
+{
+  "title": "Stocks",
+  "tagline": "Follow the market at a glance.",
+  "category": "Markets / Watchlist",
+  "layout": "screenshot",
+  "assets": [
+    {
+      "src": "assets/ui.png",
+      "fit": "contain",
+      "crop": [
+        478,
+        31,
+        752,
+        423
+      ],
+      "source_size": [
+        1708,
+        1245
+      ]
+    }
+  ],
+  "signature": "assets/frankie.svg",
+  "provenance": [
+    {
+      "file": "assets/ui.png",
+      "kind": "current local app screenshot",
+      "note": "Current watchlist settings and controls; local runtime showed No data yet, so no chart was fabricated.",
+      "captured_on": "2026-11-05"
+    }
+  ]
+}

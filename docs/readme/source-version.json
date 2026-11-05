@@ -1,0 +1,14 @@
+{
+  "repository": "frankie-stocks",
+  "source_commit": "c478332eee69d5e91e1cd73693cf1ba0bb7899dd",
+  "captured_on": "2026-11-05",
+  "source_state": "Current local working tree; existing uncommitted app edits were included where present.",
+  "materials": [
+    {
+      "file": "assets/ui.png",
+      "kind": "current local app screenshot",
+      "note": "Current watchlist settings and controls; local runtime showed No data yet, so no chart was fabricated.",
+      "captured_on": "2026-11-05"
+    }
+  ]
+}
