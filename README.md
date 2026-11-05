@@ -1,16 +1,18 @@
-![Frank Stocks — current product banner](docs/readme/banner.png)
+![Frank Stocks](docs/readme/banner.png)
 
 # Frank Stocks
 
-A stock watchlist and return dashboard built with TanStack Start, React and D3.
+Keep a thematic watchlist and compare how its stocks move across time.
 
-## Features
+[Guide](docs/guide.md) · [Run locally](#run-locally)
 
-- Organize stock symbols into thematic watchlist groups.
+## What it does
+
+- Group stock symbols by the themes you follow.
 - Compare price history and return horizons with SVG charts.
-- Change periods, scales and optional benchmark comparisons.
+- Change periods, scales and benchmark comparisons.
 
-## Getting started
+## Run locally
 
 ```sh
 npm ci
@@ -19,11 +21,11 @@ npm run dev
 
 Open the local URL printed by Vite.
 
-## Project notes
+## Before you start
 
-The watchlist is stored in `watchlist.json`; the app uses local server routes for market data. Chart periods and benchmark choices are exposed in the UI.
+The local watchlist lives in `watchlist.json`. Market data comes through server routes, and `price_cache.json` is a generated cache. Available charts depend on the data returned by the feed.
 
-## Development
+## For developers
 
 ```sh
 npm run build
@@ -31,6 +33,8 @@ npm run preview
 npm start
 ```
 
-`price_cache.json` is generated at runtime and ignored by Git.
+[Project guide](docs/guide.md) · [Artwork](docs/readme/README.md)
 
-Banner sources and update instructions: [README artwork](docs/readme/README.md).
+---
+
+Made by [Songhai Fan](https://github.com/SonghaiFan) · A Frankie project
