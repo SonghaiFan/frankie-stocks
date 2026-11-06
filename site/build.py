@@ -1,84 +1,35 @@
 #!/usr/bin/env python3
-"""Build the standalone bilingual introduction. Python 3.9+, no app build or env files."""
+"""Build the independent bilingual Stocks introduction without app/env dependencies."""
 import argparse,html,json,re,shutil
 from pathlib import Path
-
-def inline(s,base):
- s=html.escape(s)
- def link(m):
-  label,url=m.groups()
-  if not url.startswith(('https://','http://','#','mailto:')):url=base+url
-  return '<a href="'+url+'">'+label+'</a>'
- s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',link,s)
- s=re.sub(r'`([^`]+)`',r'<code>\1</code>',s)
- return re.sub(r'\*\*([^*]+)\*\*',r'<strong>\1</strong>',s)
-
-def markdown(s,base):
- out=[]
- for b in s.strip().split('\n\n'):
-  if b.startswith('```'):
-   out.append('<pre><code>'+html.escape('\n'.join(b.splitlines()[1:-1]))+'</code></pre>')
-  elif b.startswith('- '):out.append('<ul>'+''.join('<li>'+inline(l[2:],base)+'</li>' for l in b.splitlines())+'</ul>')
-  elif re.match(r'1\. ',b):out.append('<ol>'+''.join('<li>'+inline(re.sub(r'^\d+\. ','',l),base)+'</li>' for l in b.splitlines())+'</ol>')
-  elif b!='---' and not b.startswith('Made by '):out.append('<p>'+inline(b,base)+'</p>')
- return '\n'.join(out)
-
-def parse(s):
- title=re.search(r'^# (.+)$',s,re.M).group(1)
- intro=s.split('\n\n')[3]
- sections=re.split(r'^## .+$',s,flags=re.M)[1:]
- # Remove the family credit from final section.
- sections[-1]=sections[-1].split('\n---')[0]
- return title,intro,sections
+H=html.escape
 
 def build(repo,out):
- cfg=json.loads((repo/'site/project.json').read_text());out.mkdir(parents=True,exist_ok=True)
- media=out/'media';media.mkdir(exist_ok=True)
- shutil.copy(repo/'site/style.css',out/'style.css')
- shutil.copy(repo/'docs/readme/assets/frankie.svg',media/'signature.svg')
- items=[]
- for i,a in enumerate(cfg['media']):
-  source=(repo/a['src']).resolve();assert source.is_relative_to(repo.resolve()),source
-  dest=f'{i+1:02d}-{source.name}';shutil.copy(source,media/dest);items.append((dest,a))
+ cfg=json.loads((repo/'site/project.json').read_text());content=json.loads((repo/'site/content.json').read_text());out.mkdir(parents=True,exist_ok=True);(out/'media').mkdir(exist_ok=True)
+ for name in ['style.css','demo.js']:shutil.copy(repo/'site'/name,out/name)
+ for name in ['dashboard','ranked','settings','edit']:shutil.copy(repo/f'site/assets/{name}-current.png',out/f'media/{name}.png')
+ for src,dest in [('docs/readme/banner.png','banner.png'),('docs/readme/assets/frankie.svg','signature.svg')]:shutil.copy(repo/src,out/'media'/dest)
+ # Reuse the real app palette, including its dark theme, instead of drifting tokens.
+ css=(repo/'src/styles/app.css').read_text();tokens=css[css.index(':root'):css.index('* {')];(out/'tokens.css').write_text(tokens)
+ chart=(repo/'src/components/HorizonRow.tsx').read_text();ratios=re.search(r'return (\[0, 0\.236, 0\.382, 0\.618, 1\])',chart)
+ if not ratios:raise ValueError('Review band explanation: app thresholds changed')
+ data={'prices':[100,104,99,107,106,110],'benchmark':[100,102,103,104,105,106],'ratios':json.loads(ratios.group(1))}
  (out/'.nojekyll').touch()
- for lang in ['en','zh']:
-  zh=lang=='zh';prefix='../' if zh else './';output=out/'zh' if zh else out;output.mkdir(exist_ok=True)
-  s=(repo/('README.zh-CN.md' if zh else 'README.md')).read_text();title,intro,sections=parse(s)
-  base='https://github.com/'+cfg['repository']+'/blob/'+cfg['branch']+'/'
-  labels=['可以做什么','使用步骤','界面与细节','本地运行','开始之前','开发与指南'] if zh else ['What it does','How to use it','In the app','Run locally','Before you start','Development & guides']
-  cta=('打开应用' if zh else 'Open the app') if cfg['kind']=='online' else ('查看接入方式' if zh else 'Integration guide') if cfg['kind']=='api' else ('本地开始' if zh else 'Get started locally')
-  target=cfg.get('app_url') or '#start'
-  feature_items=re.findall(r'^- (.+)$',sections[0],re.M)
-  features=''.join(f'<li><span class="num">0{i+1}</span><p>{inline(t,base)}</p></li>' for i,t in enumerate(feature_items))
-  steps=''.join(f'<li>{html.escape(t)}</li>' for t in cfg['steps'][lang])
-  gallery=[]
-  for i,(dest,a) in enumerate(items):
-   caption=a.get('caption',{}).get(lang,a['caption']['en'])
-   if dest.endswith('.gif'):
-    gallery.append(f'<figure><details><summary>{"播放真实操作动图" if zh else "Play recorded demo"}</summary><img src="{prefix}media/{dest}" alt="{html.escape(caption,quote=True)}" loading="lazy"></details><figcaption><span>0{i+1}</span> {html.escape(caption)}</figcaption></figure>')
-   else:
-    gallery.append(f'<figure><a href="{prefix}media/{dest}" aria-label="{html.escape(caption,quote=True)}"><img src="{prefix}media/{dest}" alt="{html.escape(caption,quote=True)}" loading="lazy"></a><figcaption><span>0{i+1}</span> {html.escape(caption)}</figcaption></figure>')
-  guide=('素材更新指南' if zh else 'Updating screenshots & GIFs')
-  body=f'''<!doctype html>
-<html lang="{'zh-CN' if zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title)} — Frankie</title><meta name="description" content="{html.escape(intro,quote=True)}">
-<meta name="theme-color" content="{cfg['tint']}"><link rel="canonical" href="{cfg['pages_url']+('zh/' if zh else '')}">
-<link rel="alternate" hreflang="en" href="{cfg['pages_url']}"><link rel="alternate" hreflang="zh-CN" href="{cfg['pages_url']}zh/">
-<link rel="stylesheet" href="{prefix}style.css"><meta property="og:title" content="{html.escape(title,quote=True)}"><meta property="og:description" content="{html.escape(intro,quote=True)}"><meta property="og:type" content="website">
-</head><body style="--accent:{cfg['accent']};--tint:{cfg['tint']}">
-<a class="skip" href="#main">{'跳至内容' if zh else 'Skip to content'}</a>
-<header class="shell"><a class="brand" href="{prefix}"><img src="{prefix}media/signature.svg" width="96" height="40" alt="Frankie"><span>{html.escape(title)}</span></a>
-<nav aria-label="{'页面导航' if zh else 'Page navigation'}"><a href="#use">{labels[1]}</a><a href="https://github.com/{cfg['repository']}">GitHub</a><span class="languages"><a href="{prefix}" lang="en" {'aria-current="page"' if not zh else ''}>EN</a><a href="{prefix}zh/" lang="zh-CN" {'aria-current="page"' if zh else ''}>中文</a></span></nav></header>
-<main id="main" class="shell"><section class="hero"><p class="eyebrow">{html.escape(cfg['category'][lang])}</p><h1>{html.escape(title)}</h1><div class="hero-bottom"><p class="intro">{html.escape(intro)}</p><a class="button" href="{target}">{cta}<span aria-hidden="true">↗</span></a></div></section>
-<div class="hero-art"><img src="{prefix}media/{items[0][0]}" alt="{html.escape(cfg['art_note'][lang],quote=True)}" fetchpriority="high"></div><p class="art-note">{html.escape(cfg['art_note'][lang])}</p>
-<section class="section"><h2><span class="index">01</span>{labels[0]}</h2><ul class="features">{features}</ul></section>
-<section id="use" class="section how"><h2><span class="index">02</span>{labels[1]}</h2><ol class="steps">{steps}</ol></section>
-<section class="section"><h2><span class="index">03</span>{labels[2]}</h2><div class="gallery">{''.join(gallery)}</div></section>
-<section id="start" class="section split"><h2><span class="index">04</span>{labels[3]}</h2><div class="prose">{markdown(sections[1],base)}</div></section>
-<section class="section split"><h2><span class="index">05</span>{labels[4]}</h2><div class="prose">{markdown(sections[2],base)}</div></section>
-<section class="section split"><h2><span class="index">06</span>{labels[5]}</h2><div class="prose">{markdown(sections[3],base)}<p><a href="{base}site/GUIDE.md">{guide} ↗</a></p></div></section>
-</main><footer class="shell"><span>{'由' if zh else 'Made by'} <a href="https://github.com/SonghaiFan">Songhai Fan</a> · {'Frankie 系列项目' if zh else 'A Frankie project'}</span><a href="https://github.com/{cfg['repository']}">{'源代码' if zh else 'Source code'} ↗</a></footer></body></html>'''
-  (output/'index.html').write_text(body)
+ for lang,c in content.items():
+  zh=lang=='zh';pre='../' if zh else './';dest=out/'zh' if zh else out;dest.mkdir(exist_ok=True)
+  rows=lambda xs:''.join('<article><h3>'+H(a)+'</h3><p>'+H(b)+'</p></article>' for a,b in xs)
+  gallery=''.join(f'<figure><a href="{pre}media/{name}.png"><img src="{pre}media/{name}.png" alt="{H(cap)}" width="1468" height="1247" loading="lazy"></a><figcaption>{H(cap)}</figcaption></figure>' for name,cap in zip(['dashboard','ranked','settings','edit'],c['captions']))
+  d={**data,'return':c['return'],'excess':c['excess'],'points':c['points']};serialized=json.dumps(d,ensure_ascii=False).replace('<','\\u003c')
+  page=f'''<!doctype html><html lang="{'zh-CN' if zh else 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Frank Stocks | {'主题自选与地平线图' if zh else 'Thematic watchlists & horizon charts'}</title><meta name="description" content="{H(c['intro'])}"><link rel="canonical" href="{cfg['pages_url']+('zh/' if zh else '')}"><link rel="alternate" hreflang="en" href="{cfg['pages_url']}"><link rel="alternate" hreflang="zh-CN" href="{cfg['pages_url']}zh/"><link rel="stylesheet" href="{pre}tokens.css"><link rel="stylesheet" href="{pre}style.css"><meta name="theme-color" content="#f4f3f1"><meta property="og:type" content="website"><meta property="og:url" content="{cfg['pages_url']+('zh/' if zh else '')}"><meta property="og:title" content="Frank Stocks"><meta property="og:description" content="{H(c['intro'])}"><meta property="og:image" content="{cfg['pages_url']}media/banner.png"></head><body>
+<a class="skip" href="#main">{H(c['skip'])}</a><header class="shell"><a class="brand" href="{pre}">Frank Stocks</a><nav aria-label="{'页面导航' if zh else 'Page navigation'}"><a href="#chart">{H(c['nav'][0])}</a><a href="#use">{H(c['nav'][1])}</a><a href="#screens">{H(c['nav'][2])}</a><a href="#start">{H(c['nav'][3])}</a><a href="{pre}" lang="en" {'aria-current="page"' if not zh else ''}>EN</a><a href="{pre}zh/" lang="zh-CN" {'aria-current="page"' if zh else ''}>中文</a></nav></header>
+<main id="main" class="shell"><section class="hero"><div><h1>{'<br>'.join(H(x) for x in c['headline'].splitlines())}</h1><p class="lead">{H(c['intro'])}</p><a class="button" href="{cfg['app_url']}">{H(c['open'])} ↗</a></div><figure><div class="hero-image"><img src="{pre}media/dashboard.png" alt="{H(c['captions'][0])}" width="1468" height="1247" fetchpriority="high"></div><figcaption>{H(c['captions'][0])}</figcaption></figure></section>
+<section class="section concept" id="chart"><div><h2>{H(c['concept_title'])}</h2><p class="lead">{H(c['concept'])}</p><p>{H(c['concept_note'])}</p><a class="reference" href="https://idl.uw.edu/papers/horizon">{H(c['reference'])} ↗</a></div><div class="demo"><h3>{H(c['demo_title'])}</h3><p class="small">{H(c['demo_note'])}</p><p class="sample-values">{H(c['sample'])}</p><div class="demo-controls"><label><input id="benchmark" type="checkbox"> {H(c['benchmark'])}</label><label>{H(c['bands'])} <select id="bands"><option value="fibonacci">{H(c['fibonacci'])}</option><option value="normal">{H(c['normal'])}</option></select></label></div><div class="example-strip"><svg id="chart-example" viewBox="0 0 500 70" role="img" aria-label="{'合成数值的四层地平线图示例' if zh else 'Four-band horizon diagram using synthetic values'}"></svg></div><div id="result" aria-live="polite"></div><noscript><p>{'示例：价格变化 10%，基准变化 6%，相差 4 个百分点。' if zh else 'Example: 10% price change minus 6% benchmark change is 4 percentage points.'}</p></noscript></div></section>
+<section class="section"><h2>{H(c['features_title'])}</h2><div class="features">{rows(c['features'])}</div></section>
+<section class="section" id="use"><h2>{H(c['workflow_title'])}</h2><ol class="steps">{''.join('<li><h3>'+H(a)+'</h3><p>'+H(b)+'</p></li>' for a,b in c['steps'])}</ol></section>
+<section class="section" id="screens"><h2>{H(c['screens_title'])}</h2><div class="gallery">{gallery}</div></section>
+<section class="section" id="start"><h2>{H(c['data_title'])}</h2><div class="data">{rows(c['data'])}</div><div class="run"><h3>{H(c['run'])}</h3><pre><code>npm ci\nnpm run dev</code></pre><p>{H(c['run_note'])}</p><a href="https://github.com/{cfg['repository']}/blob/main/site/GUIDE.md">{H(c['guide'])} ↗</a></div></section></main>
+<footer class="shell"><a href="https://github.com/SonghaiFan"><img src="{pre}media/signature.svg" width="92" height="34" alt="Frankie"></a><span>{H(c['footer'])}</span><a href="https://github.com/{cfg['repository']}">{H(c['source'])} ↗</a></footer><script id="demo-data" type="application/json">{serialized}</script><script src="{pre}demo.js" defer></script></body></html>'''
+  (dest/'index.html').write_text(page)
  print(out)
 if __name__=='__main__':
- ap=argparse.ArgumentParser();ap.add_argument('--out',default='_site');args=ap.parse_args();repo=Path(__file__).resolve().parents[1];build(repo,Path(args.out).resolve())
+ ap=argparse.ArgumentParser();ap.add_argument('--out',default='_site');a=ap.parse_args();build(Path(__file__).resolve().parents[1],Path(a.out).resolve())

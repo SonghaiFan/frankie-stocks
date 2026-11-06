@@ -1,0 +1,196 @@
+{
+  "en": {
+    "headline": "Many stocks.\nOne visual rhythm.",
+    "intro": "Compare price changes across a thematic watchlist with compact horizon charts, shared scrubbing and optional benchmarks.",
+    "open": "Open Stocks",
+    "nav": [
+      "Read the chart",
+      "First visit",
+      "Screens",
+      "Data & storage"
+    ],
+    "concept_title": "What is a horizon chart?",
+    "concept": "A horizon chart folds value ranges into a short strip. Green and red show direction; stronger layers show larger moves. This app uses four bands so many histories can sit in one list.",
+    "concept_note": "Read the pattern, then hover or touch for the value. Band height alone does not show the complete change. The original horizon-graph research explains the layering technique.",
+    "reference": "Heer, Kong & Agrawala: Sizing the Horizon (CHI 2009)",
+    "demo_title": "Price change and benchmark change",
+    "demo_note": "Synthetic numbers for an explanation, not quotes or a trading signal. The return formula and band thresholds are adapted from the actual app. The small diagram uses straight segments rather than its smoothed D3 curve.",
+    "benchmark": "Subtract the example benchmark",
+    "bands": "Band spacing",
+    "normal": "Normal",
+    "fibonacci": "Fibonacci",
+    "price": "Example close",
+    "return": "Price change",
+    "excess": "Excess change",
+    "benchmark_result": "Benchmark change",
+    "points": "percentage points",
+    "sample": "Sample: 100 → 110; benchmark: 100 → 106.",
+    "features_title": "Choose what a comparison means.",
+    "features": [
+      [
+        "Start with a time window",
+        "D is the latest regular trading session; W uses the latest five sessions. M, 6M, Y, 5Y and MAX request longer histories. The first available close in the returned series is each stock’s baseline."
+      ],
+      [
+        "Compare with an index",
+        "S&P 500, Nasdaq and Dow subtract the benchmark’s close-based percentage change on matching dates. +4 percentage points can mean +10% for the stock against +6% for the index. Missing benchmark dates fall back to zero in the current implementation."
+      ],
+      [
+        "Keep rows comparable",
+        "Global uses shared dates and a shared value scale. Local per stock stretches each row’s own history and value range, making its internal pattern easier to see but weakening direct magnitude and date comparison."
+      ],
+      [
+        "Read the controls precisely",
+        "Normal divides the value range evenly. Fibonacci bands use 23.6%, 38.2% and 61.8% boundaries. These are display thresholds, not a forecasting or retracement tool."
+      ]
+    ],
+    "workflow_title": "Your first comparison",
+    "steps": [
+      [
+        "Choose a period",
+        "Begin with M for a broader view than the latest session, then choose a benchmark or keep No benchmark."
+      ],
+      [
+        "Scrub across the list",
+        "Hover or touch a strip. All rows move to the same shared position; the readout adds the corresponding close price. Lift or leave the row to return to its latest value."
+      ],
+      [
+        "Group or rank",
+        "The default view keeps thematic sections and sorts their rows by latest change. Rank places all rows in one ordered list."
+      ],
+      [
+        "Adjust the watchlist",
+        "Add a ticker to an existing theme. Edit reveals removal controls. The hosted watchlist is a server workspace, not a private account archive."
+      ]
+    ],
+    "screens_title": "Inside the current app",
+    "captions": [
+      "Actual M view, no benchmark, captured 6 November 2026. Displayed prices are a source snapshot.",
+      "Ranked view with S&P 500 comparison and a shared hover readout.",
+      "The real scale and per-stock domain controls at the bottom of the list.",
+      "Edit mode exposes removal controls; no shared symbols were changed for these captures."
+    ],
+    "data_title": "Know where the rows come from.",
+    "data": [
+      [
+        "Price changes, not portfolio accounting",
+        "The chart uses returned close prices. It does not compute dividend-reinvested total return, position sizes or account profit. Avg is a mean of loaded rows, not a cash-weighted portfolio result."
+      ],
+      [
+        "A processed, cached data feed",
+        "The server requests Yahoo Finance chart data, filters regular-session intraday bars and resamples long series. A line can therefore be a reduced view of a larger series. Intraday queries refresh periodically; this is not a tick-by-tick trading feed."
+      ],
+      [
+        "A lightweight shared workspace",
+        "Locally, watchlist JSON is written beside the server. On Vercel it lives in /tmp for a warm instance and can reset or differ between instances. There is no account, durable per-user watchlist or backup/restore screen."
+      ],
+      [
+        "Read labels with context",
+        "The market badge uses a weekday/time rule for New York hours; it does not know exchange holidays. Missing or failed symbol data can leave a row blank. Retry reloads a failed prices request."
+      ]
+    ],
+    "run": "Run locally",
+    "run_note": "Start the server-backed app so /api/watchlist and /api/prices exist. A static-file server alone is not enough. Market data needs network access; no AI key is used by this app.",
+    "guide": "Screenshot & content update guide",
+    "source": "Source code",
+    "footer": "A Frankie project by Songhai Fan",
+    "skip": "Skip to content"
+  },
+  "zh": {
+    "headline": "主题自选，\n比较价格变化。",
+    "intro": "用紧凑的地平线图比较主题自选列表，跨行查看同一位置，也可以减去基准指数的涨跌幅。",
+    "open": "打开 Stocks",
+    "nav": [
+      "读懂图表",
+      "初次使用",
+      "真实界面",
+      "数据与存储"
+    ],
+    "concept_title": "什么是地平线图？",
+    "concept": "地平线图把不同数值区间折叠到一条窄带里。绿色与红色表示方向，更深的叠层表示更大幅度。本应用用四个色带，让许多段历史能并排排列在同一份列表里。",
+    "concept_note": "先看走势，再悬停或触摸读取数值。单看色带高度不能还原完整涨跌幅。原始研究介绍了这种分层方法。",
+    "reference": "Heer、Kong 与 Agrawala：Sizing the Horizon（CHI 2009）",
+    "demo_title": "价格变化与基准变化",
+    "demo_note": "仅用于解释的合成数字，不是行情或交易信号。公式与分带阈值来自实际应用；小图使用直线段，完整应用使用 D3 平滑曲线。",
+    "benchmark": "减去示例基准",
+    "bands": "色带间距",
+    "normal": "等分",
+    "fibonacci": "斐波那契",
+    "price": "示例收盘价",
+    "return": "价格变化",
+    "excess": "超额变化",
+    "benchmark_result": "基准变化",
+    "points": "个百分点",
+    "sample": "示例：100 → 110；基准：100 → 106。",
+    "features_title": "先确定，自己在比较什么。",
+    "features": [
+      [
+        "选择时间范围",
+        "D 显示最近的正常交易时段，W 取最近五个交易日；M、6M、Y、5Y、MAX 请求更长历史。每支股票都以返回序列中的第一个收盘价为起点。"
+      ],
+      [
+        "减去指数变化",
+        "S&P 500、Nasdaq 与 Dow 比较，会在相同日期减去指数的收盘价涨跌幅。股票涨 10%、指数涨 6%，就是多出 4 个百分点。当前实现中，缺失的基准日期按零处理。"
+      ],
+      [
+        "决定是否共用尺度",
+        "Global 使用共用日期和数值尺度。Local per stock 把每行各自的历史与幅度拉伸，更容易看清自身走势，但不能直接按同一位置比较绝对幅度与日期。"
+      ],
+      [
+        "准确理解分带选项",
+        "Normal 等分数值范围。Fibonacci 使用 23.6%、38.2%、61.8% 边界。这只是显示阈值，不是预测或斐波那契回撤工具。"
+      ]
+    ],
+    "workflow_title": "第一次比较时",
+    "steps": [
+      [
+        "选择时段",
+        "可以先用 M 看比单个交易日更长的走势，再选择指数，或保留 No benchmark。"
+      ],
+      [
+        "跨行读取",
+        "悬停或触摸图带，所有行会定位到同一共享位置，右侧增加对应收盘价。移开或松手，恢复显示最新值。"
+      ],
+      [
+        "按主题看，或整体排名",
+        "默认保留主题分组，各组按最新变化排序。Rank 将所有行放入同一份排序列表。"
+      ],
+      [
+        "调整自选列表",
+        "向现有主题添加代码；Edit 显示移除按钮。线上列表是服务端工作区，不是私人账号档案。"
+      ]
+    ],
+    "screens_title": "当前应用里的界面",
+    "captions": [
+      "真实 M 时段、无基准视图，采集于 2026 年 11 月 6 日；图中数值是数据源快照。",
+      "按 S&P 500 超额变化排序，并跨行悬停读取。",
+      "列表底部真实的分带与逐股尺度控件。",
+      "Edit 模式显示移除入口；本次采集未改动共享代码列表。"
+    ],
+    "data_title": "了解这些行从哪里来。",
+    "data": [
+      [
+        "价格变化，不是账户收益核算",
+        "图表使用返回的收盘价，不计算股息再投资总收益、持仓规模或账户盈亏。Avg 是已加载行的平均值，不是按资金权重计算的组合收益。"
+      ],
+      [
+        "经过处理与缓存的行情",
+        "服务端请求 Yahoo Finance chart 数据，筛选正常交易时段，并对长序列重采样。所以图线可能是较大序列的缩减视图。日内查询定期刷新，不是逐笔交易行情。"
+      ],
+      [
+        "轻量的共享工作区",
+        "本地服务器把自选 JSON 写在工作目录；Vercel 使用热实例的 /tmp，可能重置，也可能在实例间不同。当前没有账号、持久化的个人自选档案或备份恢复界面。"
+      ],
+      [
+        "结合上下文读状态",
+        "市场徽标只按纽约的工作日与时间判断，不识别交易所假日。个别代码没有数据或请求失败时，行会留空；Retry 用于重试失败的行情请求。"
+      ]
+    ],
+    "run": "本地运行",
+    "run_note": "需要启动带服务器的应用，才能提供 /api/watchlist 与 /api/prices；只用静态文件服务器不够。行情需要网络，应用不使用 AI key。",
+    "guide": "截图与内容维护指南",
+    "source": "源代码",
+    "footer": "Songhai Fan 的 Frankie 系列项目",
+    "skip": "跳至内容"
+  }
+}

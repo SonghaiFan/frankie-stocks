@@ -1,46 +1,44 @@
-# Introduction page maintenance / 介绍页维护
+# Stocks introduction maintenance / Stocks 介绍页维护
 
-[English README](../README.md) · [中文 README](../README.zh-CN.md)
+The English introduction is `/`; Chinese is `/zh/`. The runtime app stays on Vercel. This independent Python build never builds the app or reads environment files.
 
-## Two destinations / 两个入口
+## Content and owning source / 内容与源码
 
-- Introduction / 介绍页: https://songhaifan.github.io/frankie-stocks/
-- App / 应用: https://frank-stocks-songhaifans-projects.vercel.app
-- The introduction is a standalone static site. It never builds the app or reads environment files. / 介绍页独立构建，不构建应用，也不读取环境变量文件。
-- English is the default; `zh/` is the Chinese version. / 英文默认，中文位于 `zh/`。
+- `site/content.json`: both languages, examples, usage instructions and data/storage limits. Update together. / 双语内容同步维护。
+- `src/routes/index.tsx`: available periods/benchmarks, `buildModel` return and benchmark arithmetic, shared versus local domains, rank and scrub behavior. Recheck these before changing the explanation. / 行为说明以这里的实际公式为准。
+- `src/components/HorizonRow.tsx`: four bands, opacity, positive/negative folds and thresholds. `build.py` extracts the actual Fibonacci ratios and deliberately fails if they change. Update both this extraction and `demo.js` when the algorithm changes. / 分带规则变化时同步更新提取器和示例。
+- `src/styles/app.css`: palette and dark tokens are copied at build time into `tokens.css`; site layout lives in `site/style.css`. / 直接复用应用配色，布局另行维护。
+- `src/lib/stocks.ts`: Yahoo chart adapter, regular-session filter, resampling, caches, filesystem watchlist and market-clock heuristic. Never describe this as a durable personal account or calibrated trading feed. / 核对数据来源、处理与存储语义。
 
-## Files to update / 更新哪些文件
+## Assets to replace / 需要替换的素材
 
-| Source / 来源 | What it shows / 内容 |
+| Asset | Replace when |
 | --- | --- |
-| `docs/readme/assets/ui.png` | Current product interface and original assets. |
+| `site/assets/dashboard-current.png` | Masthead, period/benchmark controls, row layout or chart rendering changes |
+| `site/assets/ranked-current.png` | Ranking, benchmark subtraction or hover readout changes |
+| `site/assets/settings-current.png` | Scale/domain controls change |
+| `site/assets/edit-current.png` | Editing controls or watchlist management changes |
+| `docs/readme/banner.png` | Approved banner is refreshed; copied for Open Graph |
+| `docs/readme/assets/frankie.svg` | Approved family signature changes |
 
-- `../README.md` and `../README.zh-CN.md`: product introduction, features, setup, limitations and developer commands. Update both languages together. / 同步维护双语介绍、功能、运行步骤与限制。
-- `project.json`: app URL, repository, category, colors, three user steps and the ordered media list. / 应用链接、仓库、分类、颜色、使用步骤与有序素材列表。
-- `style.css`: this app's visual treatment within the shared layout. / 统一结构下的项目视觉风格。
-- `build.py`: portable standard-library renderer. / 可独立使用的 Python 标准库构建器。
+Capture the real settled app using bundled/default symbols. Do not add or remove symbols on the public shared server just to take screenshots. Avoid personal lists, keys or account data. Wait for `AnimatedNumber` transitions and data requests to finish after period or benchmark changes; `keepPreviousData` may temporarily show the previous query. The hero uses a centered CSS crop of the actual full screenshot, not a reconstructed dashboard. Review the crop when its layout changes. Captions and gallery ordering are in `content.json` and `build.py`.
 
-## Replacing screenshots and GIFs / 替换截图和动图
+使用默认自选数据采集稳定界面；不要为截图改动线上共享列表。切换时段或基准后，等数据与数字动画结束再截图。主图只是对真实截图做 CSS 裁切，界面变化后需重新检查。
 
-1. Run the current app and capture real, settled UI. Use synthetic or guest data; hide credentials and private content. For GIFs, record a real interaction from start to finish, rather than animating a static screenshot. / 运行当前版本，使用访客或示例数据采集稳定画面；GIF 应录制真实操作，不把静态图伪装成操作录像。
-2. Replace the corresponding source file above when its screen changes. These banner assets are shared with the README; replacing them may update both the banner and this page. Keep `docs/readme/source-version.json` and banner provenance accurate. / 界面变化后替换对应文件；共享素材会同时影响 banner，需同步更新来源记录。
-3. For a new screen or GIF, add it under `site/assets/` and add an entry to `project.json` → `media` with `src`, bilingual `caption`, and optionally `captured_on` / `source_revision`. The first item is the hero; the full list is the gallery. Use a GIF's first frame as an informative resting frame, keep files small, and provide a still alternative. / 新素材放到 `site/assets/`，登记双语说明、采集时间和版本；第一项为主图，其余进入画廊。GIF 应有可读首帧并保留静态替代图。
-4. If app behavior changes, update both READMEs and both `steps` arrays. Native screenshots and shared family artwork must be labelled honestly. / 行为变化时同步更新双语 README 和使用步骤；区分原生截图与系列共享素材。
-5. Build and inspect desktop and mobile, in both languages. Check the app link and every image. / 构建后检查桌面、手机和两种语言，验证链接与所有图片。
+The four-band demo uses explicitly synthetic prices and no tickers. It follows the app formula and source thresholds, but uses straight segments instead of D3 smoothing. Keep its label and price/benchmark explanation accurate. It makes no network requests and stores nothing. / 示例使用明确标注的合成数字；不是行情、投资信号或完整应用。
+
+The concept reference is the original [Heer, Kong and Agrawala horizon-graph paper](https://idl.uw.edu/papers/horizon). Do not extend its results into claims about investment performance.
+
+## Build and check / 构建与检查
 
 ```sh
-python3 site/build.py
+python3 site/build.py --out _site
 python3 -m http.server 8080 --directory _site --bind 127.0.0.1
+node --check site/demo.js
 ```
 
-Open http://127.0.0.1:8080/ and http://127.0.0.1:8080/zh/.
+Open both languages at desktop and 390px width, light and dark. Confirm all images load and no horizontal overflow. In the example, unchecked benchmark gives +10%; checked gives +4 percentage points. Try both band spacings and keyboard navigation. Check source, guide and app links. Build uses only Python standard library; no market feed or app keys are needed.
 
-## Publishing / 发布
+检查双语、桌面手机、亮暗模式、图片、链接与键盘焦点。示例应在 10% 与 4 个百分点之间切换。
 
-Push the reviewed page changes to `main`. `.github/workflows/pages.yml` publishes only `_site/` to GitHub Pages. App deployment remains separate on Vercel for browser apps; API services and native/local apps retain their own runtime. Never include `.env` files or unrelated work in a page commit. / 推送审核后的页面改动到 `main`，工作流只发布 `_site/`；应用与 API 的部署分别管理，勿提交环境变量文件或其他未完成代码。
-
-If the branch or repository owner changes, update `project.json`, the workflow branch and README introduction links. / 分支或仓库所有者变化时，同步修改配置、工作流与介绍页链接。
-
-## App signature / 应用签名
-
-The app signature uses `public/frankie-signature.svg`, copied from the approved `docs/readme/assets/frankie.svg`. It links to this introduction page. / 应用签名使用已确认的系列 SVG，并链接到介绍页。
+Push only reviewed page files and required workflow changes to `main`. Pages builds `_site`; app deployment is independent. Do not include unrelated code or `.env` files. / 只推送本次介绍页与必要工作流改动，不包含环境文件或其他未完成代码。
