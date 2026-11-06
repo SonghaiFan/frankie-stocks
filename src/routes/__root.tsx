@@ -40,6 +40,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <footer style={{ textAlign: "center", padding: 16, color: "#61746e" }}><a href="https://songhaifan.github.io/frankie-stocks/" aria-label="About Frankie stocks" style={{ display: "inline-flex", alignItems: "center", padding: "6px", color: "inherit",  }}><span aria-hidden="true" style={{ display: "block", width: 76, height: 26, backgroundColor: "currentColor", mask: "url(/frankie-signature.svg) center / contain no-repeat", WebkitMask: "url(/frankie-signature.svg) center / contain no-repeat" }} /></a></footer>
         <Scripts />
       </body>
     </html>
