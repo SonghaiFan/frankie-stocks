@@ -6,7 +6,7 @@
 
 Keep a thematic watchlist and compare how its stocks move across time.
 
-[Guide](docs/guide.md) · [Run locally](#run-locally)
+[Introduction](https://songhaifan.github.io/frankie-stocks/) · [Guide](docs/guide.md) · [Run locally](#run-locally)
 
 ## What it does
 

@@ -1,0 +1,49 @@
+{
+  "repository": "SonghaiFan/frankie-stocks",
+  "branch": "main",
+  "pages_url": "https://songhaifan.github.io/frankie-stocks/",
+  "kind": "online",
+  "app_url": "https://frank-stocks-songhaifans-projects.vercel.app",
+  "vercel_project": "frank-stocks",
+  "accent": "#2c695a",
+  "tint": "#f2f7f5",
+  "category": {
+    "en": "Markets / Watchlists",
+    "zh": "市场 / 自选"
+  },
+  "steps": {
+    "en": [
+      "Organize symbols into themes.",
+      "Choose a period, scale and comparison.",
+      "Inspect the chart when the data feed returns results."
+    ],
+    "zh": [
+      "按主题整理股票代码。",
+      "选择时段、刻度和比较方式。",
+      "数据源返回结果后查看图表。"
+    ]
+  },
+  "media": [
+    {
+      "src": "docs/readme/assets/ui.png",
+      "caption": {
+        "en": "Current product interface and original assets.",
+        "zh": "项目真实界面或原始素材。"
+      },
+      "crop": [
+        478,
+        31,
+        752,
+        423
+      ],
+      "source_size": [
+        1708,
+        1245
+      ]
+    }
+  ],
+  "art_note": {
+    "en": "Actual local controls with no market data loaded.",
+    "zh": "真实本地界面，截图时尚未加载行情数据。"
+  }
+}

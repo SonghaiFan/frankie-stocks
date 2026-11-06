@@ -7,3 +7,6 @@ node_modules/
 .vinxi/
 dist/
 price_cache.json
+
+# Standalone introduction build
+/_site/

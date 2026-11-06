@@ -6,7 +6,7 @@
 
 按主题整理自选股，比较它们在不同时段的变化。
 
-[项目指南](docs/guide.md) · [本地运行](#本地运行)
+[介绍页](https://songhaifan.github.io/frankie-stocks/zh/) · [项目指南](docs/guide.md) · [本地运行](#本地运行)
 
 ## 可以做什么
 
