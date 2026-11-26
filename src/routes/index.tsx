@@ -402,7 +402,7 @@ function Dashboard() {
   return (
     <div className="app">
       <header className="masthead">
-        <h1>Frank Stocks</h1>
+        <h1>Frankie Stocks</h1>
         <div className={market.data?.open ? 'market live' : 'market'}>
           <span className="dot" />
           {market.data ? (market.data.open ? `${market.data.time_et.slice(0, 5)} ET` : 'Closed') : '—'}

@@ -27,5 +27,6 @@
       "note": "Current watchlist settings and controls; local runtime showed No data yet, so no chart was fabricated.",
       "captured_on": "2026-11-05"
     }
-  ]
+  ],
+  "icon": "assets/icon.svg"
 }
